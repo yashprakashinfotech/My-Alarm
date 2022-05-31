@@ -6,14 +6,17 @@ import android.content.Intent
 import android.media.MediaPlayer
 import android.provider.Settings
 
-class MyAlarmListener : BroadcastReceiver() {
+class MyAlarmReceiver : BroadcastReceiver() {
 
+//    companion object{
+//        private lateinit var mp : MediaPlayer
+//    }
     private lateinit var mp : MediaPlayer
     override fun onReceive(context : Context?, intent : Intent?) {
 
         mp = MediaPlayer.create(context, Settings.System.DEFAULT_RINGTONE_URI)
         mp.isLooping = true
         mp.start()
-
     }
+
 }

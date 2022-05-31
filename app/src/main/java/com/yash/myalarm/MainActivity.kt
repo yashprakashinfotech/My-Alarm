@@ -1,16 +1,17 @@
 package com.yash.myalarm
 
 import android.annotation.SuppressLint
-import android.app.AlarmManager
-import android.app.DatePickerDialog
-import android.app.PendingIntent
+import android.app.*
 import android.content.Context
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
+import android.os.Build
 import android.os.Bundle
 import android.text.format.DateFormat
+import android.util.Log
 import android.widget.Button
 import android.widget.EditText
+import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.timepicker.MaterialTimePicker
 import com.google.android.material.timepicker.TimeFormat
 import java.text.SimpleDateFormat
@@ -19,23 +20,32 @@ import java.util.*
 class MainActivity : AppCompatActivity() {
 
     private lateinit var etTime : EditText
-    lateinit var btnAlarm : Button
+    private lateinit var btnTimer : Button
+    private lateinit var btnAlarm : Button
+    private lateinit var btnCancel : Button
 
     private lateinit var etMTimePicker : EditText
     private lateinit var etDatePicker : EditText
 
+    lateinit var myAlarm :MyAlarmReceiver
+
     private val ALARM_REQUEST_CODE = 100
 
+    lateinit var alarmManager : AlarmManager
+    lateinit var pi : PendingIntent
     @SuppressLint("UnspecifiedImmutableFlag")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
         initView()
-        datePicker()
-        val alarmManager : AlarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
 
-        btnAlarm.setOnClickListener {
+        createNotificationChannel()
+
+        datePicker()
+        alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
+
+        btnTimer.setOnClickListener {
 
             val t = etTime.text.toString()
             val time = t.toInt()
@@ -49,6 +59,42 @@ class MainActivity : AppCompatActivity() {
             alarmManager.set(AlarmManager.RTC_WAKEUP,triggerTime, pi)
         }
 
+        btnAlarm.setOnClickListener {
+
+            val etDate = etDatePicker.text.toString()
+            val etTime = etMTimePicker.text.toString()
+
+            if (etDate.isNotEmpty() && etTime.isNotEmpty()){
+
+                val myDate = "$etDate $etTime:00"
+//            val myDate = "2014/10/29 18:10:45"
+                val sdf = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
+                val date = sdf.parse(myDate)
+                val millis = date?.time
+                Log.d("boss","$millis")
+
+                val iBroadCast = Intent(this,MyTimerReceiver::class.java)
+
+                pi = PendingIntent.getBroadcast(this,ALARM_REQUEST_CODE,iBroadCast,PendingIntent.FLAG_UPDATE_CURRENT)
+
+                alarmManager.set(AlarmManager.RTC_WAKEUP,millis!!, pi)
+                Toast.makeText(this,"Alarm Set!",Toast.LENGTH_SHORT).show()
+            }else{
+                Toast.makeText(this,"Please select Date And Time!",Toast.LENGTH_SHORT).show()
+            }
+
+        }
+        btnCancel.setOnClickListener {
+
+
+
+            val intent = Intent(this,MyAlarmReceiver::class.java)
+            pi = PendingIntent.getBroadcast(this,ALARM_REQUEST_CODE,intent,0)
+            alarmManager.cancel(pi)
+            Toast.makeText(this,"Alarm Cancelled",Toast.LENGTH_SHORT).show()
+        }
+
+
         etMTimePicker.setOnClickListener {
 
             mTimePicker()
@@ -58,11 +104,30 @@ class MainActivity : AppCompatActivity() {
 
     }
 
+    private fun createNotificationChannel(){
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
+
+            val name : CharSequence = "Alarm Reminder"
+            val description = "Channel For Alarm Manager"
+            val importance = NotificationManager.IMPORTANCE_HIGH
+            val channel = NotificationChannel("alarmId",name,importance)
+            channel.description = description
+            val notificationManager = getSystemService(NotificationManager::class.java)
+
+            notificationManager.createNotificationChannel(channel)
+        }
+    }
+
     private fun initView(){
-        btnAlarm = findViewById(R.id.btnTimer)
+        btnTimer = findViewById(R.id.btnTimer)
+        btnAlarm = findViewById(R.id.btnAlarm)
+        btnCancel = findViewById(R.id.btnCancel)
         etMTimePicker = findViewById(R.id.etMTimePicker)
         etDatePicker = findViewById(R.id.etDatePicker)
         etTime = findViewById(R.id.etTime)
+
+        myAlarm = MyAlarmReceiver()
     }
 
     private fun mTimePicker(){
@@ -89,7 +154,7 @@ class MainActivity : AppCompatActivity() {
         mTimePicker.addOnPositiveButtonClickListener {
             val hour = mTimePicker.hour
             val minute = mTimePicker.minute
-            etMTimePicker.setText(String.format("%02d : %02d",hour,minute))
+            etMTimePicker.setText(String.format("%02d:%02d",hour,minute))
         }
 
     }
@@ -112,7 +177,8 @@ class MainActivity : AppCompatActivity() {
                 cal.set(Calendar.YEAR, year)
                 cal.set(Calendar.MONTH, month)
                 cal.set(Calendar.DAY_OF_MONTH, day)
-                val myFormat = "dd-MM-yyyy"
+                val myFormat = "yyyy-MM-dd"
+//                val myFormat = "dd-MM-yyyy"
                 val dateFormat = SimpleDateFormat(myFormat, Locale.US)
                 etDatePicker.setText(dateFormat.format(cal.time))    // Set Date in EditText
 //                val timeMills = cal1.timeInMillis
@@ -129,7 +195,7 @@ class MainActivity : AppCompatActivity() {
             )
 
             //for max date set (At current Time & Date)
-            dateDialog.datePicker.maxDate = cal1.timeInMillis
+            dateDialog.datePicker.minDate = cal1.timeInMillis
             dateDialog.show()
 
         }
