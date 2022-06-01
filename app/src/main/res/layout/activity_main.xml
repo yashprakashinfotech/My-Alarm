@@ -12,18 +12,20 @@
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="20dp"
         android:inputType="number"
+        android:hint="@string/set_timer_in_seconds"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.15" />
+        app:layout_constraintVertical_bias="0.15"
+        tools:ignore="Autofill" />
 
     <Button
         android:id="@+id/btnTimer"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
 
-        android:text="Set Timer"
+        android:text="@string/set_timer"
 
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -35,7 +37,7 @@
         android:id="@+id/etMTimePicker"
         android:layout_width="match_parent"
         android:layout_height="45dp"
-        android:hint="HH:mm"
+        android:hint="@string/hh_mm"
         android:layout_marginHorizontal="30dp"
 
         android:textAlignment="center"
@@ -63,12 +65,12 @@
         android:cursorVisible="false"
         android:focusable="false"
         android:focusableInTouchMode="false"
-        android:hint="dd/MM/yyyy"
+        android:hint="@string/dd_mm_yyyy"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/btnTimer"
-        app:layout_constraintVertical_bias="0.3"
+        app:layout_constraintVertical_bias="0.15"
         tools:ignore="Autofill,LabelFor,MissingConstraints,RtlSymmetry,TextFields" />
 
     <Button

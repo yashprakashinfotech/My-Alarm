@@ -1,12 +1,9 @@
 package com.yash.myalarm
 
-import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import android.media.MediaPlayer
-import android.provider.Settings
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 
@@ -33,6 +30,7 @@ class MyTimerReceiver : BroadcastReceiver() {
             .setDefaults(NotificationCompat.DEFAULT_ALL)
             .setPriority(NotificationCompat.PRIORITY_HIGH)
             .setContentIntent(pendingIntent)
+            .addAction(R.drawable.ic_notifications,"Stop",pendingIntent)
 
         val notificationManager = NotificationManagerCompat.from(context)
         notificationManager.notify(123,builder.build())

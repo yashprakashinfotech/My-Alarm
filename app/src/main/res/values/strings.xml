@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">My Alarm</string>
+    <string name="set_timer_in_seconds">set Timer in seconds</string>
+    <string name="set_timer">Set Timer</string>
+    <string name="hh_mm">HH:mm</string>
+    <string name="dd_mm_yyyy">dd/MM/yyyy</string>
+    <string name="stop">Stop</string>
 </resources>
