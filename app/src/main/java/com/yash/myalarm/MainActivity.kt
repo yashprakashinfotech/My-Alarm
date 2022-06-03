@@ -10,7 +10,6 @@ import android.text.format.DateFormat
 import android.util.Log
 import android.widget.Button
 import android.widget.EditText
-import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.timepicker.MaterialTimePicker
@@ -34,7 +33,7 @@ class MainActivity : AppCompatActivity() {
 
     lateinit var alarmManager : AlarmManager
     lateinit var pi : PendingIntent
-    @SuppressLint("UnspecifiedImmutableFlag")
+    @SuppressLint("UnspecifiedImmutableFlag", "SimpleDateFormat")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
